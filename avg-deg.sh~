@@ -330,7 +330,7 @@ all ok?"
 #		r.mapcalc "temp = float(if(temp2<$min, $min, temp2))" --overwrite			# reducing lowest values to higher min	
 
 		echo "check temp.$a"
-		#read ok
+		read ok
 		#rescaling image to VP
 		r.rescale --overwrite input="temp.$a" output="deg.$a" to="0,10"
 		echo "image rescaled for category $a. Is it all ok?"

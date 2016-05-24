@@ -1,0 +1,9 @@
+#!/bin/bash
+set -o nounset
+set -e
+
+# Part of the scriopt that calculates the Vegetation Potential by making an average of single scenes VP
+#comes after NDVI calculation 
+#made in March 2016 for Grass 7
+
+

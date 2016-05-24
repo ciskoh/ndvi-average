@@ -168,7 +168,7 @@ degradation calculation
 
 ****
 *************************************************" 
-#read ok
+read ok
 
 . /home/matt/Dropbox/github/average/avg-deg.sh
 

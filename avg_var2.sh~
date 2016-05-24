@@ -1,0 +1,211 @@
+#!/bin/bash
+
+
+
+	# function for reducing highest values at 90th quantile and rescaling; function should with the following parameters: normal <input image> <VP value> <output name>
+	
+
+		function normal {
+		local inimg=$1 #input NDVI image to be normalized variable name img
+		local quant=$2 #vegetation potential value variable name is yquant
+		local name=$3 #output raster name; variable name is outname
+	
+		r.mapcalc "str1=if(MASK,float($inimg*$digits),null())"
+		
+		r.mapcalc "str2=float(if($quant-str1<0,0,str1))" #eliminating values above Vegetation Potential and result as distance from potential
+		r.rescale input=str2 output=str3 to=0,100 #Rescaling values to obtain distance from
+		
+		
+		r.mapcalc "$name=str3"
+		g.mremove -f rast=str1,str2,str3
+		g.mremove -f rast=str1,str2,str3
+		echo "check $name.reversed it has been normalised to $quant from image $inimg"
+		}
+
+##############################################################################################################################
+#obtain list of category values
+lsv=$(r.stats -n input=$basemap)
+
+echo "this is lsv: $lsv"
+
+##read ok
+
+#starting cycle for each category
+
+echo "
+
+***************************************************
+starting cycle 
+for quantiles calculations and co.
+
+
+****; fi
+*************************************************" 
+r.mask -r
+scount=0
+
+#creating average map including all images *PART MODIFIED FROM PREVIOUS SCRIPT*
+nlist2=$(g.mlist type=rast pattern=corr* separator=comma)
+echo "nlist2 is $nlist2"
+##read ok
+r.series --overwrite input=$nlist2 output=yearly.avg method=average
+
+digits=1000 #number of digity to consider in ndvi values
+
+for g in $lsv ;
+do
+
+	echo "calculating quantiles for category $g"
+	##read ok
+	#creating mask for category $g
+	echo "creating mask for category $g"
+	r.mask -o input=$basemap maskcats=$g
+	##read ok
+	nlist=$(g.mlist type=rast pattern=corr*)
+	nlist2=$(g.mlist type=rast pattern=corr* separator=comma)
+	#creating output folder 
+	mkdir -p $foldout2/statistics
+	mkdir -p $foldout2/rasters
+	#TODO change potential calculation from yearly mean to single frame 
+	#calculation of year round 90th quantile
+	if [[ scount -eq "0" ]]; then #if for creating folder for statistics
+		mkdir -p $foldout2/category_stats
+		vlist=$foldout/statistics/$s"_"lsvalue.csv #creating stats file and column headers
+		echo "ls-code; land use; slope; aspect; VP value; Very degraded; Degraded; Semidegraded; Healthy; Vegetation Potential; " >$vlist #creating stats file and column headers
+	
+	fi
+
+		mkdir -p $foldout2/category_stats/$g #TODO: can be eliminated?
+
+	#calculation of statistics
+	r.univar -e map=yearly.avg percentile=25,50,75,90,2 >$foldout2/category_stats/$g-yearly-stats.txt
+
+	echo "check $foldout2/category_stats/$g-yearly-stats.txt"
+	######read ok
+	#identifying 90th quantile / Vegetation potential
+	mpath=$foldout2/category_stats/$g-yearly-stats.txt #path to yearly stats
+	p90a=$(sed -n '22p' < $mpath)
+
+	p90=${p90a#*:}
+
+	yquant=$(echo "$p90*$digits" | bc -l) #this is the value of the Vegetation potential
+	echo "quantile calculated for landscape area $g: value is: $yquant !!!"
+	##read ok
+
+	#Creation of statistics on $vlist.csv
+
+	#separating code into land use, slope and aspect
+	if [ "$g" -gt "100" ]; then
+	lu=$((g/100))
+	slope=$(((g/10)-(lu*10)))
+	aspect=$((g-(lu*100)-(slope*10)));
+	else
+	lu=$g
+	slope=0
+	aspect=0;
+	fi
+	
+	
+	#creating images from Yearly average image for present category *PART changed from previous script*
+	dcount=0
+		for h in $nlist ;
+		do
+		
+		normal $h $yquant "$s.fin.$g.$h" #calling function to normalise ndvi images
+		
+		##read ok
+		dcount=$((dcount+1)); #updating counter
+		done
+	
+	fin=$s"_fin_"$g #name of final map for this category
+	
+	#merging together all the images for this category
+	mylist=$(g.mlist type=rast pattern=$s".fin."$g* separator=comma) #list of images to be merged
+	r.series --overwrite input=$mylist output=temp_$g method=sum #merging degradation values
+	r.mapcalc "$fin=((100*$dcount)-temp_$g)/($dcount)" #reversing values to obtain state
+
+	echo "check fin_$g"
+	##read ok
+	echo "#######################################################
+
+	CYLE finished for all images on category $g
+
+	##############################################################"
+	
+	scount=$((scount+1))
+	r.mask -r;
+	
+#extracting different deg categories from final map
+	r.mapcalc "tempdeg1=$fin<25"
+	r.mapcalc "tempdeg2=$fin>25 && $fin<50"
+	r.mapcalc "tempdeg3=$fin>50 && $fin<75"
+	r.mapcalc "tempdeg4=$fin>75 && $fin<90"
+	r.mapcalc "tempdeg5=$fin>90"
+	
+	
+	#calculating statistics for each deg level and extractin sum of values (pixel count)
+
+	a=$(r.univar -g --quiet map=tempdeg1)
+	deg1=${a##*sum=}
+
+	a=$(r.univar -g --quiet map=tempdeg2)
+	deg2=${a##*sum=}
+
+	a=$(r.univar -g --quiet map=tempdeg3)
+	deg3=${a##*sum=}
+
+	a=$(r.univar -g --quiet map=tempdeg4)
+	deg4=${a##*sum=}
+
+	a=$(r.univar -g --quiet map=tempdeg5)
+	deg5=${a##*sum=}
+	
+	echo "$g; $lu; $slope; $aspect; $yquant; $deg1; $deg2; $deg3; $deg4; $deg5">>$vlist #updating $vlist
+
+done
+
+
+echo "check mask"
+
+r.mask -o input=$basemap
+##read ok
+
+##Merging all the images together using gdal *pART MODIFIED FROM PREVIOUS SCRIPT*
+finlist=$(g.mlist type=rast pattern=$s"_fin_*" separator=comma)
+echo " final map list is $finlist"
+#read ok
+
+
+#Patching final maps together with r.patch
+r.mask -r
+r.patch input=$finlist output=$s"_variance_allyear"
+r.mask -r
+
+echo " 
+check final map "$s"_variance_allyear
+
+"
+#read ok
+#Exporting final image
+
+
+r.mask -r 
+
+#exporting final maps
+r.out.gdal input=$s"_variance_allyear" output=/$foldout/rasters/$s"_variance_allyear.tiff" nodata=255
+
+
+
+echo "
+############
+##############
+#################
+
+VARIANCE.SH IS FINISHED!!!!
+GOING BACK TO LMS-AN.SH
+
+#################
+###############
+############
+"
+g.mremove -f rast=*norm*,temp*,*fin*
