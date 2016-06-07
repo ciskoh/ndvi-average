@@ -24,7 +24,7 @@ echo " Importing DTM"
 r.in.gdal --overwrite input=$DTM output=DTM
 
 echo " Importing land use"
-v.in.ogr --overwrite dsn=$LU output=LU_vec snap=1e-09
+v.in.ogr --overwrite dsn=$LU output=LU_vec snap=1e-08
 
 #g.list type=rast,vect
 echo "verify imported files"
@@ -49,10 +49,7 @@ r.mask --overwrite raster=lu.rast
 
 #r.patch --o input=lu.neigh7,lu.neigh5,lu.neigh3,lu.neigh1 output=lu.gen
 
-#send land use categories to txt file
-r.describe -1 -n map=lu.rast >$foldout/statistics/landscape_values.txt
 
-#adding labels to landscape_values.txt
 
 
 
@@ -94,22 +91,22 @@ r.reclass.area input=asp.reclass output=asp.recl_big value=2 mode=greater
 ###fill the holes (2)
 
 #neighbour gen 1
-r.neighbors -c input=asp.reclass output=asp.neigh1 method=mode size=1
+#r.neighbors -c input=asp.reclass output=asp.neigh1 method=mode size=1
 
 #neighbour gen 3 
-r.neighbors -c input=asp.reclass output=asp.neigh3 method=mode size=3
+#r.neighbors -c input=asp.reclass output=asp.neigh3 method=mode size=3
 
 #neighbour gen 5
-r.neighbors -c input=asp.reclass output=asp.neigh5 method=mode size=5
+#r.neighbors -c input=asp.reclass output=asp.neigh5 method=mode size=5
 
 #neighbour gen 7
-r.neighbors -c input=asp.reclass output=asp.neigh7 method=mode size=7
+#r.neighbors -c input=asp.reclass output=asp.neigh7 method=mode size=7
 
 #patch neighbors to delete no data
 
-r.patch --overwrite input=asp.recl_big,asp.neigh7,asp.neigh5,asp.neigh3,asp.neigh1 output=asp.gen
+#r.patch --overwrite input=asp.recl_big,asp.neigh7,asp.neigh5,asp.neigh3,asp.neigh1 output=asp.gen
 
-r.mapcalc "asp.gen=asp.reclass" ||true
+r.mapcalc "asp.gen =asp.reclass" ||true
 
 echo " is asp.gen ok?"
 ##read ok
@@ -117,7 +114,7 @@ echo " is asp.gen ok?"
 
 r.describe -1 -n map=asp.gen >$foldout/statistics/asp_cat.txt
 
-g.remove -f type=rast name=asp.recl_big,asp.neigh7,asp.neigh5,asp.neigh3,asp.neigh1
+#g.remove -f type=rast name=asp.recl_big,asp.neigh7,asp.neigh5,asp.neigh3,asp.neigh1
 
 ####4 reclass slope slope.reclass has one "0"
  
@@ -131,27 +128,27 @@ r.reclass.area --overwrite input=slope.reclass output=slope.recl_big value=2 mod
 
 #neghborhood generalisation (2)
 #neighbour gen 1
-r.neighbors -c --overwrite input=slope.reclass output=slope.neigh1 method=mode size=1
+#r.neighbors -c --overwrite input=slope.reclass output=slope.neigh1 method=mode size=1
 
 #neighbour gen 3 
-r.neighbors -c --overwrite input=slope.reclass output=slope.neigh3 method=mode size=3
+#r.neighbors -c --overwrite input=slope.reclass output=slope.neigh3 method=mode size=3
 
 #neighbour gen 5
-r.neighbors -c  --overwrite input=slope.reclass output=slope.neigh5 method=mode size=5
+#r.neighbors -c  --overwrite input=slope.reclass output=slope.neigh5 method=mode size=5
 
 #neighbour gen 7
-r.neighbors -c  --overwrite input=slope.reclass output=slope.neigh7 method=mode size=7
+#r.neighbors -c  --overwrite input=slope.reclass output=slope.neigh7 method=mode size=7
 
 #patch neighbors to delete no data
 
-r.patch --overwrite input=slope.recl_big,slope.neigh7,slope.neigh5,slope.neigh3,slope.neigh1 output=slope.gen 
+#r.patch --overwrite input=slope.recl_big,slope.neigh7,slope.neigh5,slope.neigh3,slope.neigh1 output=slope.gen 
 
 
-r.mapcalc "slope.gen=slope.reclass" --overwrite
+r.mapcalc "slope.gen =slope.reclass" --overwrite
 echo " is slope.gen ok?"
 ##read ok
 
-g.remove -f type=rast name=slope.recl_big,slope.neigh7,slope.neigh5,slope.neigh3,slope.neigh1
+#g.remove -f type=rast name=slope.recl_big,slope.neigh7,slope.neigh5,slope.neigh3,slope.neigh1
 
 r.describe -1 -n map=slope.gen >$foldout/statistics/slope_cat.txt
 
@@ -159,30 +156,30 @@ r.describe -1 -n map=slope.gen >$foldout/statistics/slope_cat.txt
 
 echo " combining slope and aspect" 
 
-r.mapcalc 'slope.asp=slope.gen+asp.gen'
+r.mapcalc 'slopeasp =slope.gen+asp.gen'
 
 #generalize slope.asp
 
 #neighbour gen 1
-r.neighbors -c input=slope.asp output=slopeasp.neigh1 method=mode size=1
+#r.neighbors -c input=slope.asp output=slopeasp.neigh1 method=mode size=1
 
 #neighbour gen 3 
-r.neighbors -c input=slope.asp output=slopeasp.neigh3 method=mode size=3
+#r.neighbors -c input=slope.asp output=slopeasp.neigh3 method=mode size=3
 
 #neighbour gen 5
-r.neighbors -c input=slope.asp output=slopeasp.neigh5 method=mode size=5
+#r.neighbors -c input=slope.asp output=slopeasp.neigh5 method=mode size=5
 
 #neighbour gen 7
-r.neighbors -c input=slope.asp output=slopeasp.neigh7 method=mode size=7
+#r.neighbors -c input=slope.asp output=slopeasp.neigh7 method=mode size=7
 
 #patch neighbors to delete no data
 
-r.patch --o input=slopeasp.neigh7,slopeasp.neigh5,slopeasp.neigh3,slopeasp.neigh1 output=slopeasp.gen
+#r.patch --o input=slopeasp.neigh7,slopeasp.neigh5,slopeasp.neigh3,slopeasp.neigh1 output=slopeasp.gen
 
 echo "is slopeasp.gen ok?"
 ##read ok
 
-g.remove -f type=rast name=slopeasp.neigh7,slopeasp.neigh5,slopeasp.neigh3,slopeasp.neigh1
+#g.remove -f type=rast name=slopeasp.neigh7,slopeasp.neigh5,slopeasp.neigh3,slopeasp.neigh1
 
 
 #######################################################################
@@ -190,7 +187,7 @@ g.remove -f type=rast name=slopeasp.neigh7,slopeasp.neigh5,slopeasp.neigh3,slope
 
 echo " merging slopeasp and land use"
 
-r.mapcalc "landscape = int(slopeasp.gen+lu.rast)" --overwrite
+r.mapcalc "landscape = int(slopeasp+lu.rast)" --overwrite
 
 
 #generalize landscape small areas
@@ -206,17 +203,17 @@ r.neighbors -c input=landscape output=landscape.neigh3 method=mode size=3
 r.neighbors -c input=landscape output=landscape.neigh5 method=mode size=5
 
 #neighbour gen 7
-r.neighbors -c input=landscape output=landscape.neigh7 method=mode size=7
+#r.neighbors -c input=landscape output=landscape.neigh7 method=mode size=7
 
 #patch neighbors to delete no data
 
-r.patch --o input=landscape_big,landscape.neigh7,landscape.neigh5,landscape.neigh3,landscape.neigh1 output=landscape
+r.patch --o input=landscape_big,landscape.neigh5,landscape.neigh3,landscape.neigh1 output=landscape
 
 echo "the landscape raster is ready, code is first land use, second slope, third aspect. got it?"
 ##read ok
 
 echo "check if landscape is ok"
-###read ok 
+#read ok 
 
 g.remove type=rast name=landscape_big,landscape.neigh7,landscape.neigh5,landscape.neigh3,landscape.neigh1
 

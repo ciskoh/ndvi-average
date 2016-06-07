@@ -100,7 +100,6 @@ echo "END of Importing and correcting landscape"
 
 
 
-
 if [ "$imp" -eq "1" ];
 	then
 	echo "I will import the images"
@@ -128,7 +127,6 @@ echo "end of image classification"
 
 
 
-##############################################################################################################################
 #STEP 4: QUANTILE CALCULATIONS
 
 
@@ -140,7 +138,7 @@ echo "
 
 ***************************************************
 starting cycle 
-for VP calculations
+for VP calculations WITH LANDFORMS
 
 
 ****
@@ -150,20 +148,22 @@ mkdir -p $foldout/"results_"$antype  #creating folder for storing results
 
 foldout2=$foldout/"results_"$antype	#folder for results variable
 
+landscape=landscape  #map to use with landforms
+
 
 
 . /home/matt/Dropbox/github/average/avg-VP.sh #launching script for VP calculation
 
 
 
-###########END of VP calculation ####################################################
-########################################################################
+###########END of VP calculation WITH LANDFORMS ####################################################
+
 
 echo "
 
 ***************************************************
 starting 
-degradation calculation
+degradation calculation WITH LANDFORMS
 
 
 ****
@@ -177,6 +177,50 @@ g.remove -f type=rast pattern=corr*,fin.* #deleting final degradation files
 #r.mask -r ||true
 #scount=0
 
+##############################Start VP and DEG calculation NO LANDFORMS  ######################################################
+
+r.mask -r ||true
+
+echo "
+
+***************************************************
+starting cycle 
+for VP calculations NO LANDFORMS
+
+
+****
+*************************************************" 
+antype=$VPtype"_"$sermode"_NO_LF"
+
+mkdir -p $foldout/"results_"$antype  #creating folder for storing results
+
+foldout2=$foldout/"results_"$antype	#folder for results variable
+
+r.mapcalc "landscapeNOLF = int((landscape-10)/100)"
+
+landscape=landscapeNOLF  #map to use NO landforms
+
+
+. /home/matt/Dropbox/github/average/avg-VP.sh #launching script for VP calculation
+
+
+
+###########END of VP calculation NO LANDFORMS ####################################################
+
+
+echo "
+
+***************************************************
+starting 
+degradation calculation NO LANDFORMS
+
+
+****
+*************************************************" 
+#read ok
+
+. /home/matt/Dropbox/github/average/avg-deg.sh
+
 
 ################################################################################################################################
 
@@ -189,6 +233,11 @@ echo "
 Script finished successfully at $a !!!!!!
 
 ***************************" >>$readme
+
+
+
+
+
 
 echo "ALL finished
 #
