@@ -38,9 +38,6 @@ if [ "$VPtype" = "1" ]; then
 	
 	#obtain list of category values
 	lsv=$(r.stats -n input=$landscape) #list of all categories in landscape
-
-	echo "lsv is $lsv"
-	# read ok
 	
 	vpcount=0
 	for i in $lsv; do

@@ -64,7 +64,7 @@ The following settings where used:
 
 $sets
 
-***************************">>$readme
+*************************** " >>$readme
 
 
 
@@ -106,24 +106,12 @@ if [ "$imp" -eq "1" ];
 	#read ok
 	. $sdir/avg-ndvi.sh;
 	else 
-	nlist2=`cat $foldout/statistics/ndvi_list2.txt`
+	nlist2=$(g.list type=rast pattern=ndvi* separator=space)
 	echo "I will not import the images, will use those instead: $nlist2"
 	##read ok;
 fi
 
 echo "end of image classification"
-
-
-
-#########classification of ndvi variance through variance.sh
-#r.mask -r||true
-
-## for state map
-#s=a0
-#basemap=landscape_state
-#mkdir -p $foldout/state
-#foldout2=$foldout/state
-
 
 
 
@@ -196,7 +184,7 @@ mkdir -p $foldout/"results_"$antype  #creating folder for storing results
 
 foldout2=$foldout/"results_"$antype	#folder for results variable
 
-r.mapcalc "landscapeNOLF = int((landscape-10)/100)"
+r.mapcalc --overwrite "landscapeNOLF = int((landscape-10)/100)"
 
 landscape=landscapeNOLF  #map to use NO landforms
 

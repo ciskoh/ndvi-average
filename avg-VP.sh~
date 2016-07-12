@@ -113,7 +113,7 @@ if [ "$VPtype" = "1" ]; then
 
 	echo "VP calculations finished for all categories with method 3! " >>$readme
 	echo "VP values from average NDVI are: ${genvp[@]} " >>$readme
-	read ok
+	
 	g.remove -f type=rast pattern=test*
 	
 fi
