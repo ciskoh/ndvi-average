@@ -40,14 +40,14 @@ do
 	echo "i is $i"
 	name=${i##*/}
 	echo "name is $name"
-	##read ok
+	###read ok
 	ent=$(sed -n '21p' $i/$name"_MTL.txt")
 	ent="$(echo "${ent}" | tr -d '[[:space:]]')"
 
 	ldate="${ent##*=}"
 	#ldate2=$(echo -e "${ldate}" | sed -e 's/^[[:space:]]*//')
 	echo "ent is $ent date is $ldate"
-	#read ok
+	##read ok
 	year=`echo $ldate |cut -d- -f1`
 	echo "year is $year"
 	#ent2=${ldate#*-}
@@ -55,10 +55,10 @@ do
 	month=`echo $ldate | cut -d- -f2` #month numeric value
 	sdate=$month
 	
-	##read ok
+	###read ok
 	
 		echo "ent is $ent, year is $year,ldate is $ldate sdate is $sdate yoyoyo"
-	##read ok
+	###read ok
 	
 
 	if [ $count -eq "0" ]; then
@@ -72,14 +72,19 @@ do
 
 " >>$readme
 	fi
-	short=$year$month
+	# short=$year$month # versione originale
+
+	#PARTE EXTRA
+	zdate=${ldate//-}
+	short=$zdate
+        ### fine parte extra
 
 	echo "name=$short date=$ldate image=$name" >>$readme
 	 
 	echo "month is $month; check output file $readme"
-	#read ok
+	##read ok
 
-	short=$year$month
+	# short=$year$month # versione originale
 
 	#short=${name:9:7};
 	#echo "short is $short";
@@ -90,16 +95,16 @@ do
 
 	for b in $i/*; do
 		echo $b
-		#read ok
+		##read ok
 		temp=`echo $b | rev| cut -d/ -f1 |rev`
 		echo "temp is $temp"
-		#read ok
+		##read ok
 		if [[ $temp = *.TIF ]];then
 			echo "$temp is a TIF"
-			#read ok
+			##read ok
 			band=${b##*/}
 			echo $band
-			#read ok
+			##read ok
 			sband=${band:21:4}
 			sband=${sband//./}
 
@@ -112,7 +117,7 @@ do
 	done 
 
 	echo "check imported bands of image $name"
-	####read ok
+	#####read ok
 
 	# 2-ATHMOSPHERIC CORRECTION
 
@@ -122,7 +127,7 @@ do
 	#name of corrected picture
 	corr="corr_"$short
 	echo "meta is $meta; corr is $corr"
-	#read ok
+	##read ok
 	#athmospheric correction
 
 	i.landsat.toar input=$short"_B" output=$corr"." metfile=$meta 	sensor=oli8 method=dos2
@@ -142,7 +147,7 @@ do
 	zen=$(echo 90 - $nadir | bc)
 	
 	echo " azimuth is $az, nadir is $nadir and zenith is $zen"
-	#read ok
+	##read ok
 
 	# creating illumination modelawk 'BEGIN { printf "%.2f\n", 10/6 }'
 	
@@ -157,7 +162,7 @@ do
 	
 	tlist=$(g.list type=rast pattern="tcor*" separator=comma)
 	echo "check topographic corrected images $tlist"
-	#read ok
+	##read ok
 
 	## 3-ndvi calculation
 	#ndvi for corrected images
@@ -166,7 +171,7 @@ do
 	b5="tcor.$corr.5"
 
 	echo "this are the rasters for ndvi: $b4 and $b5"
-	#read ok
+	##read ok
 
 
 	#NDVI calc-string for mapcalc
@@ -186,7 +191,7 @@ do
 	g.remove -f type=rast pattern="*cor*"
 
 	echo "cycle restarting"
-	####read ok
+	#####read ok
 count=$((count+1));
 done
 
@@ -206,7 +211,7 @@ g.list -m type=raster pattern=ndvi* separator=comma >/$foldout/statistics/ndvi_l
 g.list -m type=raster pattern=ndvi* >/$foldout/statistics/ndvi_list2.txt
 
 echo "check list at /$foldout/statistics/ndvi_list.txt"
-####read ok
+#####read ok
 
 
 #end

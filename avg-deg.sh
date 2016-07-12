@@ -38,6 +38,7 @@ if [ "$sermode" = "3" ]; then #if for detrmining which type of evaluation should
 	#starting cyle for variance analysis
 	
 	dcount=0
+	echo "dcount is $dcount"
 	for a in $lsv; do	#cycle through landscape categories
 		
 				
@@ -59,22 +60,8 @@ all ok?"
 		min=${arraymin[$dcount]} 								# value of min for present category
 		max=${arraymax[$dcount]}
  		
-
-		#to check VP accuracy
-		r.mapcalc --overwrite "tempVP = averagendvi>$VP" # getting part above VP
-		r.null map=tempVP setnull=0          # deleting 0
-		aVP=`r.univar -g map=tempVP | cut -d= -f2`
-		set -- $aVP
-		avp=$(echo $1)                         # cellcount of above VP
-		bVP=`r.univar -g map=MASK | cut -d= -f2`
-		set -- $bVP
-		bvp=$(echo $1)                         # cellcount this category
-
-		perc=$((bvp/avp))
-
-	
-		
-		echo "min is $min, max is $max, VP is $VP, avp is $avp, bvp is $bvp, perc is $perc"
+				
+		echo "min is $min, max is $max, VP is $VP"
 		#read ok
 		
 				
@@ -87,25 +74,9 @@ all ok?"
 		#rescaling image to VP
 		r.rescale --overwrite input="temp.$a" output="deg.$a" to="0,100"
 		
-		#checking perc
-		r.mapcalc --overwrite "tempVP2 = deg.$a>100" # getting part above VP
-		r.null map=tempVP2 setnull=0          # deleting 0
-		aVP2=`r.univar -g map=tempVP | cut -d= -f2`
-		set -- $aVP2
-		avp2=$(echo $1)                         # cellcount of above VP
-		bVP2=`r.univar -g map=MASK | cut -d= -f2`
-		set -- $bVP2
-		bvp2=$(echo $1)                         # cellcount this category
-
-		perc2=$((bvp2/avp2))
-		
-		echo "image rescaled for category $a, perc is $perc2. Is it all ok?"
-		#read ok
-		
+				
 #		#displaying map obtained
-#		d.mon stop=wx0||true
-#		d.mon start=wx0
-#		d.rast MASK;d.rast deg.$a
+#		
 		echo "image rescaled for category $a. check deg.$a!!"
 		
 		

@@ -143,7 +143,7 @@ for VP calculations WITH LANDFORMS
 
 ****
 *************************************************" 
-antype=$VPtype"_"$sermode
+antype=$VPtype
 mkdir -p $foldout/"results_"$antype  #creating folder for storing results
 
 foldout2=$foldout/"results_"$antype	#folder for results variable
@@ -190,7 +190,7 @@ for VP calculations NO LANDFORMS
 
 ****
 *************************************************" 
-antype=$VPtype"_"$sermode"_NO_LF"
+antype=$VPtype"_NO_LF"
 
 mkdir -p $foldout/"results_"$antype  #creating folder for storing results
 

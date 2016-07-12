@@ -196,7 +196,7 @@ mkdir -p $foldout/"results_"$antype  #creating folder for storing results
 
 foldout2=$foldout/"results_"$antype	#folder for results variable
 
-r.mapcalc "landscapeNOLF = int((landscape-10)/100"
+r.mapcalc "landscapeNOLF = int((landscape-10)/100)"
 
 landscape=landscapeNOLF  #map to use NO landforms
 
