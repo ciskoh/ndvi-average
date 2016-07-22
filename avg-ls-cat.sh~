@@ -213,7 +213,7 @@ echo "the landscape raster is ready, code is first land use, second slope, third
 ##read ok
 
 echo "check if landscape is ok"
-read ok 
+#read ok 
 
 g.remove type=rast name=landscape_big,landscape.neigh7,landscape.neigh5,landscape.neigh3,landscape.neigh1
 

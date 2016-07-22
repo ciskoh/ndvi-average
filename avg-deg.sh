@@ -64,7 +64,7 @@ all ok?"
  		
 		# Calculating boundaries of categories according to method 1
 		
-		b=`r.univar -g map=averagendvi@avg-jul2016` 			
+		b=`r.univar -g map=averagendvi` 			
 		# getting 90th quantile from single image
 		
 		eval "$b"

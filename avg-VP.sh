@@ -70,7 +70,7 @@ if [ "$VPtype" = "1" ]; then
 
 ### New part to calculate with method 1 MEAN+SD
 		
-		b=`r.univar -g map=averagendvi@avg-jul2016` 			
+		b=`r.univar -g map=averagendvi` 			
 		# getting 90th quantile from single image
 		
 		eval "$b"

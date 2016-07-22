@@ -38,9 +38,6 @@ if [ "$VPtype" = "1" ]; then
 	
 	#obtain list of category values
 	lsv=$(r.stats -n input=$landscape) #list of all categories in landscape
-
-	echo "lsv is $lsv"
-	# read ok
 	
 	vpcount=0
 	for i in $lsv; do
@@ -73,7 +70,7 @@ if [ "$VPtype" = "1" ]; then
 
 ### New part to calculate with method 1 MEAN+SD
 		
-		b=`r.univar -g map=averagendvi@avg-jul2016` 			
+		b=`r.univar -g map=averagendvi` 			
 		# getting 90th quantile from single image
 		
 		eval "$b"

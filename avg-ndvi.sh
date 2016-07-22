@@ -72,17 +72,11 @@ do
 
 " >>$readme
 	fi
-	short=$year$month
+	
+	zdate=${ldate//-}
+	short=$zdate
+       
 
-	echo "name=$short date=$ldate image=$name" >>$readme
-	 
-	echo "month is $month; check output file $readme"
-	#read ok
-
-	short=$year$month
-
-	#short=${name:9:7};
-	#echo "short is $short";
 	echo "short is $short"
 	#read ok
 

@@ -21,10 +21,10 @@ g.region res=10
 #Import DTM
 
 echo " Importing DTM"
-r.in.gdal --overwrite input=$DTM output=DTM
+r.in.gdal --overwrite --quiet input=$DTM output=DTM
 
 echo " Importing land use"
-v.in.ogr --overwrite dsn=$LU output=LU_vec snap=1e-08
+v.in.ogr --overwrite --quiet dsn=$LU output=LU_vec snap=1e-07
 
 #g.list type=rast,vect
 echo "verify imported files"
