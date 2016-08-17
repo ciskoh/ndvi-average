@@ -58,13 +58,15 @@ loc=$(g.gisenv -n get=LOCATION_NAME)
 da=$(date)
 echo "Executed for the area of $loc on $da">>$readme 
 
-sets=$(sed -n 3,13p $varpath)
+# print settings of script to readme
+sets=`grep ^[^#] $varpath`
+
+
 echo "
 The following settings where used:
-
-$sets
-
+ $sets
 *************************** " >>$readme
+
 
 
 
@@ -104,7 +106,9 @@ if [ "$imp" -eq "1" ];
 	then
 	echo "I will import the images"
 	#read ok
-	. $sdir/avg-ndvi.sh;
+
+	# NEW importing ndviaverage instead of importing and correcting the whole thing
+	r.in.gdal --overwrite input=$fold output=averagendvi
 	else 
 	nlist2=$(g.list type=rast pattern=ndvi* separator=space)
 	echo "I will not import the images, will use those instead: $nlist2"
