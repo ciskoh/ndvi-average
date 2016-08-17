@@ -1,5 +1,5 @@
 #!/bin/bash
-set -o nounset
+#set -o nounset
 set +e
 r.mask -r||true
 set -e
@@ -47,10 +47,11 @@ echo "sdir is $sdir"
 #manual input for basic variable or script
 
 
-varpath=$(zenity --file-selection)
-	. $varpath
+# varpath=$(zenity --file-selection)
+	. $varpath 
 
-
+# create result folder
+mkdir -p $foldout
 #writing file with script details
 readme=$foldout/README-script-details.txt #path to readme txt
 echo "Analysis of NDVI Variance in one area throughout the year" >$readme
@@ -58,11 +59,14 @@ loc=$(g.gisenv -n get=LOCATION_NAME)
 da=$(date)
 echo "Executed for the area of $loc on $da">>$readme 
 
-sets=$(sed -n 3,13p $varpath)
+# print settings of script to readme
+sets=`grep ^[^#] $varpath`
+
+
 echo "
 The following settings where used:
 
-$sets
+ $sets
 
 *************************** " >>$readme
 
@@ -184,7 +188,7 @@ mkdir -p $foldout/"results_"$antype  #creating folder for storing results
 
 foldout2=$foldout/"results_"$antype	#folder for results variable
 
-r.mapcalc "landscapeNOLF = int((landscape-10)/100)"
+r.mapcalc --overwrite "landscapeNOLF = int((landscape-10)/100)"
 
 landscape=landscapeNOLF  #map to use NO landforms
 

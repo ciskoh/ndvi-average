@@ -1,5 +1,5 @@
 #!/bin/bash
-set -o nounset
+#set -o nounset
 set +e
 r.mask -r||true
 set -e
@@ -46,11 +46,12 @@ echo "sdir is $sdir"
 #read ok
 #manual input for basic variable or script
 
+# lines excluded because of loop
+# varpath=$(zenity --file-selection)
+#	. $varpath 
 
-varpath=$(zenity --file-selection)
-	. $varpath
-
-
+# create result folder
+mkdir -p $foldout
 #writing file with script details
 readme=$foldout/README-script-details.txt #path to readme txt
 echo "Analysis of NDVI Variance in one area throughout the year" >$readme
@@ -58,11 +59,14 @@ loc=$(g.gisenv -n get=LOCATION_NAME)
 da=$(date)
 echo "Executed for the area of $loc on $da">>$readme 
 
-sets=$(sed -n 3,13p $varpath)
+# print settings of script to readme
+sets=`grep ^[^#] $varpath`
+
+
 echo "
 The following settings where used:
 
-$sets
+ $sets
 
 *************************** " >>$readme
 
