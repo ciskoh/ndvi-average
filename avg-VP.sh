@@ -279,7 +279,7 @@ if [ "$VPtype" = "3" ]; then
 			echo "creating stats csv files"
 						
 			vlist=$foldout2/deg_stats_$antype.csv 	# name of degradation stats file 
-			echo "ls-code; land use; slope; aspect; min; max; VP value; Very degraded; Degraded; Semidegraded; Healthy; Vegetation Potential; Totalcellcount " >$vlist #creating stats file and column headers
+			echo "ls-code; land use; slope; aspect; min; max; VP value; q10; Very degraded; Degraded; Semidegraded; Healthy; Vegetation Potential; Totalcellcount " >$vlist #creating stats file and column headers
 		
 			vlist2=$foldout2/VP-$antype-detail.csv 					# name of statistics file for detailed VP analysis
 			a=`echo $nlist | tr " " "; " ` 						# list of images for column titles
@@ -298,7 +298,12 @@ if [ "$VPtype" = "3" ]; then
 		#getting maximum value
 		max=`echo $a | cut -d" " -f5`           					# getting new minimum value from current images
 			
-		
+		# New minimum value for Very degraded boundary
+		c=$(r.quantile --quiet input=averagendvi percentiles=10)
+		q10=`echo $c | rev | cut -d":" -f1 | rev` 
+		VDval[$vpcount]=$q10
+
+
 		genvp[$vpcount]=$VPave								# genVP is a general array where the median VP value for each category is stored
 		
 		# storing min and max values in arrays               	
