@@ -48,9 +48,11 @@ echo "sdir is $sdir"
 
 
 varpath=$(zenity --file-selection)
+echo $varpath
+read ok
 	. $varpath
 
-
+mkdir -p $foldout
 #writing file with script details
 readme=$foldout/README-script-details.txt #path to readme txt
 echo "Analysis of NDVI Variance in one area throughout the year" >$readme
@@ -58,13 +60,15 @@ loc=$(g.gisenv -n get=LOCATION_NAME)
 da=$(date)
 echo "Executed for the area of $loc on $da">>$readme 
 
-sets=$(sed -n 3,13p $varpath)
+# print settings of script to readme
+sets=`grep ^[^#] $varpath`
+
+
 echo "
 The following settings where used:
-
-$sets
-
+ $sets
 *************************** " >>$readme
+
 
 
 
@@ -82,7 +86,7 @@ g.region res=30
 
 if [ "$shc" -eq "1" ]; then
 
-	. $sdir/avg-ls-cat.sh;
+	r.in.gdal --overwrite input=$LU output=landscape ;
 	
 fi
 
@@ -104,7 +108,9 @@ if [ "$imp" -eq "1" ];
 	then
 	echo "I will import the images"
 	#read ok
-	. $sdir/avg-ndvi.sh;
+
+	# NEW importing ndviaverage instead of importing and correcting the whole thing
+	r.in.gdal --overwrite input=$fold output=averagendvi
 	else 
 	nlist2=$(g.list type=rast pattern=ndvi* separator=space)
 	echo "I will not import the images, will use those instead: $nlist2"
@@ -184,7 +190,7 @@ mkdir -p $foldout/"results_"$antype  #creating folder for storing results
 
 foldout2=$foldout/"results_"$antype	#folder for results variable
 
-r.mapcalc "landscapeNOLF = int((landscape-10)/100)"
+r.mapcalc --overwrite "landscapeNOLF = int((landscape-10)/100)"
 
 landscape=landscapeNOLF  #map to use NO landforms
 

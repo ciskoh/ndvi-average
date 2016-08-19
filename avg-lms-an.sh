@@ -50,7 +50,7 @@ echo "sdir is $sdir"
 varpath=$(zenity --file-selection)
 	. $varpath
 
-
+mkdir -p $foldout
 #writing file with script details
 readme=$foldout/README-script-details.txt #path to readme txt
 echo "Analysis of NDVI Variance in one area throughout the year" >$readme
@@ -84,7 +84,7 @@ g.region res=30
 
 if [ "$shc" -eq "1" ]; then
 
-	. $sdir/avg-ls-cat.sh;
+	r.in.gdal --overwrite input=$LU output=landscape ;
 	
 fi
 
