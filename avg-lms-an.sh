@@ -47,7 +47,7 @@ echo "sdir is $sdir"
 #manual input for basic variable or script
 
 
-varpath=$(zenity --file-selection)
+#varpath=$(zenity --file-selection)
 	. $varpath
 
 mkdir -p $foldout
@@ -84,7 +84,7 @@ g.region res=30
 
 if [ "$shc" -eq "1" ]; then
 
-	r.in.gdal --overwrite input=$LU output=landscape ;
+		. $sdir/avg-ls-cat.sh;
 	
 fi
 
@@ -160,14 +160,38 @@ degradation calculation WITH LANDFORMS
 
 ****
 *************************************************" 
-#read ok
+if [ "$VPtype" = "1" ]; then
 
-. /home/matt/Dropbox/github/average/avg-deg.sh
+echo "degradation calc mod 1 "
+
+. /home/matt/Dropbox/github/average/avg-deg1.sh
+
+fi
+
+#########
+
+if [ "$VPtype" = "2" ]; then
+
+echo "degradation calc mod 2 "
+. /home/matt/Dropbox/github/average/avg-deg2.sh
+
+fi
+
+########
+
+
+if [ "$VPtype" = "3" ]; then
+
+echo "degradation calc mod 3 "
+. /home/matt/Dropbox/github/average/avg-deg3.sh
+
+fi
 
 
 g.remove -f type=rast pattern=corr*,fin.* #deleting final degradation files
 #r.mask -r ||true
-#scount=0
+
+
 
 ##############################Start VP and DEG calculation NO LANDFORMS  ######################################################
 
@@ -192,26 +216,41 @@ r.mapcalc --overwrite "landscapeNOLF = int((landscape-10)/100)"
 
 landscape=landscapeNOLF  #map to use NO landforms
 
+#############################################################3
 
-. /home/matt/Dropbox/github/average/avg-VP.sh #launching script for VP calculation
 
+if [ "$VPtype" = "1" ]; then
+
+echo "degradation calc mod 1 "
+. /home/matt/Dropbox/github/average/avg-deg1.sh
+
+fi
+
+#########
+
+if [ "$VPtype" = "2" ]; then
+
+echo "degradation calc mod 2 "
+. /home/matt/Dropbox/github/average/avg-deg2.sh
+
+fi
+########
+
+
+if [ "$VPtype" = "3" ]; then
+
+echo "degradation calc mod 3 "
+. /home/matt/Dropbox/github/average/avg-deg3.sh
+
+fi
+
+
+g.remove -f type=rast pattern=corr*,fin.* #deleting final degradation files
+#r.mask -r ||true
 
 
 ###########END of VP calculation NO LANDFORMS ####################################################
 
-
-echo "
-
-***************************************************
-starting 
-degradation calculation NO LANDFORMS
-
-
-****
-*************************************************" 
-#read ok
-
-. /home/matt/Dropbox/github/average/avg-deg.sh
 
 
 ################################################################################################################################
