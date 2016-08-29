@@ -48,7 +48,7 @@ echo "sdir is $sdir"
 
 
 #varpath=$(zenity --file-selection)
-	. $varpath
+	#. $varpath
 
 mkdir -p $foldout
 #writing file with script details
@@ -106,9 +106,9 @@ if [ "$imp" -eq "1" ];
 	then
 	echo "I will import the images"
 	#read ok
-
-	# NEW importing ndviaverage instead of importing and correcting the whole thing
-	r.in.gdal --overwrite input=$fold output=averagendvi
+	. $sdir/avg-ndvi.sh;
+#	# NEW importing ndviaverage instead of importing and correcting the whole thing
+#	r.in.gdal --overwrite input=$fold output=averagendvi
 	else 
 	nlist2=$(g.list type=rast pattern=ndvi* separator=space)
 	echo "I will not import the images, will use those instead: $nlist2"
@@ -193,63 +193,63 @@ g.remove -f type=rast pattern=corr*,fin.* #deleting final degradation files
 
 
 
-##############################Start VP and DEG calculation NO LANDFORMS  ######################################################
+###############################Start VP and DEG calculation NO LANDFORMS  ######################################################
 
-r.mask -r ||true
-
-echo "
-
-***************************************************
-starting cycle 
-for VP calculations NO LANDFORMS
-
-
-****
-*************************************************" 
-antype=$VPtype"_NO_LF"
-
-mkdir -p $foldout/"results_"$antype  #creating folder for storing results
-
-foldout2=$foldout/"results_"$antype	#folder for results variable
-
-r.mapcalc --overwrite "landscapeNOLF = int((landscape-10)/100)"
-
-landscape=landscapeNOLF  #map to use NO landforms
-
-#############################################################3
-
-
-if [ "$VPtype" = "1" ]; then
-
-echo "degradation calc mod 1 "
-. /home/matt/Dropbox/github/average/avg-deg1.sh
-
-fi
-
-#########
-
-if [ "$VPtype" = "2" ]; then
-
-echo "degradation calc mod 2 "
-. /home/matt/Dropbox/github/average/avg-deg2.sh
-
-fi
-########
-
-
-if [ "$VPtype" = "3" ]; then
-
-echo "degradation calc mod 3 "
-. /home/matt/Dropbox/github/average/avg-deg3.sh
-
-fi
-
-
-g.remove -f type=rast pattern=corr*,fin.* #deleting final degradation files
 #r.mask -r ||true
 
+#echo "
 
-###########END of VP calculation NO LANDFORMS ####################################################
+#***************************************************
+#starting cycle 
+#for VP calculations NO LANDFORMS
+
+
+#****
+#*************************************************" 
+#antype=$VPtype"_NO_LF"
+
+#mkdir -p $foldout/"results_"$antype  #creating folder for storing results
+
+#foldout2=$foldout/"results_"$antype	#folder for results variable
+
+#r.mapcalc --overwrite "landscapeNOLF = int((landscape-10)/100)"
+
+#landscape=landscapeNOLF  #map to use NO landforms
+
+##############################################################3
+
+
+#if [ "$VPtype" = "1" ]; then
+
+#echo "degradation calc mod 1 "
+#. /home/matt/Dropbox/github/average/avg-deg1.sh
+
+#fi
+
+##########
+
+#if [ "$VPtype" = "2" ]; then
+
+#echo "degradation calc mod 2 "
+#. /home/matt/Dropbox/github/average/avg-deg2.sh
+
+#fi
+#########
+
+
+#if [ "$VPtype" = "3" ]; then
+
+#echo "degradation calc mod 3 "
+#. /home/matt/Dropbox/github/average/avg-deg3.sh
+
+#fi
+
+
+#g.remove -f type=rast pattern=corr*,fin.* #deleting final degradation files
+##r.mask -r ||true
+
+
+############END of VP calculation NO LANDFORMS ####################################################
 
 
 

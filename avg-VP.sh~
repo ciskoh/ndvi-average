@@ -28,20 +28,20 @@ if [ "$VPtype" = "1" ]; then
 
 	echo "this is the list of categories: $lsv
 	"
-	#	#read ok
-	#cicle through categories
+		#read ok
+	cicle through categories
 	
 	
-	#REmoved because using ndviaverage (pre-prepared)
-	#Merging all the maps in NDVI
-	#nlist2=`echo $nlist | tr " " ","`
-	#r.series --overwrite input=$nlist2 output=averagendvi method=average
-	#r.mapcalc "averagendvi = int(averagendvi)" --overwrite
+	
+#	Merging all the maps in NDVI
+	nlist2=`echo $nlist | tr " " ","`
+	r.series --overwrite input=$nlist2 output=averagendvi method=average
+	r.mapcalc "averagendvi = int(averagendvi)" --overwrite
 
-	# exporting averagendvi
-	#r.out.gdal --overwrite input=averagendvi output=$foldout/ndvi/averagendvi.tiff format=GTiff	
+#	 exporting averagendvi
+	r.out.gdal --overwrite input=averagendvi output=$foldout/ndvi/averagendvi.tiff format=GTiff	
 	
-	#loop to calculate vegetation potential for each category
+#	loop to calculate vegetation potential for each category
 	
 	#obtain list of category values
 	lsv=$(r.stats -n input=$landscape) #list of all categories in landscape
@@ -176,7 +176,7 @@ if [ "$VPtype" -gt "1" ]; then
 			echo "ls-code; land use; slope; aspect; min; max; VP value; q10; Very degraded; Degraded; Semidegraded; Healthy; Vegetation Potential; Totalcellcount " >$vlist #creating stats file and column headers
 		
 			vlist2=$foldout2/VP-$antype-detail.csv 					# name of statistics file for detailed VP analysis
-			a=`echo $nlist | tr " " "; " ` 						# list of images for column titles
+			#a=`echo $nlist | tr " " "; " ` 						# list of images for column titles
 			echo "category; VPvalue" >$vlist2; 					# list of images for column titles
 		fi
 

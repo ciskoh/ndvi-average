@@ -28,20 +28,20 @@ if [ "$VPtype" = "1" ]; then
 
 	echo "this is the list of categories: $lsv
 	"
-	#	#read ok
-	#cicle through categories
+		#read ok
+	cicle through categories
 	
 	
-	#REmoved because using ndviaverage (pre-prepared)
-	#Merging all the maps in NDVI
-	#nlist2=`echo $nlist | tr " " ","`
-	#r.series --overwrite input=$nlist2 output=averagendvi method=average
-	#r.mapcalc "averagendvi = int(averagendvi)" --overwrite
+	
+#	Merging all the maps in NDVI
+	nlist2=`echo $nlist | tr " " ","`
+	r.series --overwrite input=$nlist2 output=averagendvi method=average
+	r.mapcalc "averagendvi = int(averagendvi)" --overwrite
 
-	# exporting averagendvi
-	#r.out.gdal --overwrite input=averagendvi output=$foldout/ndvi/averagendvi.tiff format=GTiff	
+#	 exporting averagendvi
+	r.out.gdal --overwrite input=averagendvi output=$foldout/ndvi/averagendvi.tiff format=GTiff	
 	
-	#loop to calculate vegetation potential for each category
+#	loop to calculate vegetation potential for each category
 	
 	#obtain list of category values
 	lsv=$(r.stats -n input=$landscape) #list of all categories in landscape
@@ -136,18 +136,18 @@ if [ "$VPtype" -gt "1" ]; then
 	#obtain list of category values
 	lsv=$(r.stats -n input=$landscape) 			# list of all categories in landscape map	
 #REmoved because using ndviaverage (pre-prepared)	
-#	nlist=$(g.list type=rast pattern=ndvi* separator=space) # list of ndvi images	
+	nlist=$(g.list type=rast pattern=ndvi* separator=space) # list of ndvi images	
 
-#	echo "this is the list of categories: $lsv
-#	and this is the list of images: $nlist"
-#	#	#read ok
-#	#cicle through categories
-#	
-#	
-#	#Merging all the maps in NDVI
-#	nlist2=`echo $nlist | tr " " ","`
-#	r.series --overwrite input=$nlist2 output=averagendvi method=average
-#	r.mapcalc "averagendvi = int(averagendvi)" --overwrite
+	echo "this is the list of categories: $lsv
+	and this is the list of images: $nlist"
+	#	#read ok
+	#cicle through categories
+	
+	
+	#Merging all the maps in NDVI
+	nlist2=`echo $nlist | tr " " ","`
+	r.series --overwrite input=$nlist2 output=averagendvi method=average
+	r.mapcalc "averagendvi = int(averagendvi)" --overwrite
 		
 	#loop to calculate vegetation potential for each category
 	
