@@ -3,7 +3,7 @@
 set +e
 set -e
 
-for x in /media/matt/MJR-gis/6-Creete/ls_analysis/input/model_var/newvar/*.sh; do
+for x in /media/matt/MJR-gis/3-Spain/ls_analysis/input/model_variations/*.sh; do
 	varpath=$x
 	echo $varpath
 #read ok
